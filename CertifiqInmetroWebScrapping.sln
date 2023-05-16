@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertifiqInmetroWebScrapping", "CertifiqInmetroWebScrapping\CertifiqInmetroWebScrapping.csproj", "{3BAD3768-4A7A-4F62-A3B8-4C40C623131D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BAD3768-4A7A-4F62-A3B8-4C40C623131D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BAD3768-4A7A-4F62-A3B8-4C40C623131D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BAD3768-4A7A-4F62-A3B8-4C40C623131D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BAD3768-4A7A-4F62-A3B8-4C40C623131D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A289AD2-BFA5-4337-A58B-A071C7CB580B}
+	EndGlobalSection
+EndGlobal
