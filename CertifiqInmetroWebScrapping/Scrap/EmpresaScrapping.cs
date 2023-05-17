@@ -79,7 +79,13 @@ namespace CertifiqInmetroWebScrapping.Scrap
                     }
 
                     empresa.Escopos = escopo;
-                    empresas.Add(empresa);
+
+                    var situacao = panel.FindElement(By.TagName("p"));
+
+                    if (situacao.Text.Contains("Situação:"))
+                        empresa.Situacao = situacao.Text.Replace("Situação: ", "");
+
+                        empresas.Add(empresa);
 
                     IWebElement closeButton = driver.FindElement(By.ClassName("close"));
                     closeButton.Click();

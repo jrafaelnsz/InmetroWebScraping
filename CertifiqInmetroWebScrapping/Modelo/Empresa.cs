@@ -16,6 +16,6 @@ namespace CertifiqInmetroWebScrapping.Modelo
         public string OrganismoCertificador { get; set; }
         public string OrganismoAcreditadoCGCRE { get; set; }
         public Escopo Escopos { get; set; }
-        public string Situaco { get; set; }
+        public string Situacao { get; set; }
     }
 }
