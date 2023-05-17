@@ -6,7 +6,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace CertifiqInmetroWebScrapping.Scrap
 {
-    public class EmpresaScrapping
+    public class EmpresaScraping
     {
         public static void Obter(OrganismoCertificador certificador)
         {
