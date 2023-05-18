@@ -30,7 +30,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
                     listaOrganismoCerificador.Add(new OrganismoCertificador(item.GetAttribute("value"), item.Text));
             }
 
-            JsonFileManager.Write(listaOrganismoCerificador, "c:\\temp\\OrganismoCerificador.json");
+            JsonFileManager.Write(listaOrganismoCerificador, "..//..//OrganismoCerificador.json");
             driver.Quit();
         }
     }

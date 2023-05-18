@@ -21,6 +21,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
             var options = new ChromeOptions();
             //options.AddArgument("--headless"); // Optional: Run in headless mode without opening a browser window
             IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
+            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(3000);
 
             driver.Navigate().GoToUrl("https://certifiq.inmetro.gov.br/Consulta/ConsultaEmpresas");
 
@@ -60,6 +61,8 @@ namespace CertifiqInmetroWebScrapping.Scrap
                     columns[0].FindElement(By.TagName("a")).Click();
 
                     Thread.Sleep(2000);
+
+                    AguardaCarregamentoElemento(driver, By.ClassName("panel-body"));
 
                     IWebElement panel = driver.FindElement(By.ClassName("panel-body"));
 
@@ -102,5 +105,17 @@ namespace CertifiqInmetroWebScrapping.Scrap
             driver.Quit();
         }
 
+        private static void AguardaCarregamentoElemento(IWebDriver driver, By by)
+        {
+            var count = 0;
+            while (driver.FindElements(by).Count == 0)
+            {
+                Thread.Sleep(5000);
+                count++;
+
+                if (count >= 20)
+                    throw new SystemException("Elemento não carregou");  
+            }
+        }
     }
 }
