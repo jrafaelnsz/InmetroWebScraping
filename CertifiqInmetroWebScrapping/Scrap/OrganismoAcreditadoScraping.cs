@@ -14,7 +14,9 @@ namespace CertifiqInmetroWebScrapping.Scrap
         {
             var listaOrganismoCerificador = new List<OrganismoCertificador>();
 
-            string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
+            //string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
+            string chromeDriverPath = @"..//..//chromedriver.exe";
+
 
             // Create a new ChromeDriver instance
             var options = new ChromeOptions();
