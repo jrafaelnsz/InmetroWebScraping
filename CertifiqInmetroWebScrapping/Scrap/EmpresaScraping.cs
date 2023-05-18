@@ -10,10 +10,12 @@ namespace CertifiqInmetroWebScrapping.Scrap
     {
         public static void Obter(OrganismoCertificador certificador)
         {
-            if (File.Exists($"c:\\temp\\{certificador.Valor}.json"))
+            if (File.Exists($"..//..//{certificador.Valor}.json"))
                 return;
 
-            string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
+         // string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
+            string chromeDriverPath = @"..//..//chromedriver.exe";
+
 
             // Create a new ChromeDriver instance
             var options = new ChromeOptions();
@@ -94,7 +96,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
                 }
             }
 
-            JsonFileManager.Write(empresas, $"c:\\temp\\{certificador.Valor}.json");
+            JsonFileManager.Write(empresas, $"..//..//{certificador.Valor}.json");
 
             // Close the browser and quit the driver
             driver.Quit();

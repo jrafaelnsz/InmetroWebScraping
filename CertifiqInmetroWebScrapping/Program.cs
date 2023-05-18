@@ -44,7 +44,9 @@ namespace CertifiqInmetroWebScrapping
             //1: Obter Organismos certificadores (criar json com resultado)
             //2: Buscar empresas do organismo certificador (criar json com resultado)
 
-            var organismoCertificadorPath = "c:\\temp\\OrganismoCerificador.json";
+           // var organismoCertificadorPath = "c:\\temp\\OrganismoCerificador.json";
+            var organismoCertificadorPath = "..//..//OrganismoCerificador.json";
+
 
             //Verificar se existe o arquivo de OrganismoCerificador            
             if (!File.Exists(organismoCertificadorPath))
@@ -68,7 +70,7 @@ namespace CertifiqInmetroWebScrapping
             //1: Obter Organismos certificadores (criar json com resultado)
             //2: Buscar empresas do organismo certificador (criar json com resultado)
 
-            var organismoAcreditadoPath = "c:\\temp\\OrganismoAcreditado.json";
+            var organismoAcreditadoPath = "..//..//OrganismoAcreditado.json";
 
             //Verificar se existe o arquivo de OrganismoCerificador            
             if (!File.Exists(organismoAcreditadoPath))

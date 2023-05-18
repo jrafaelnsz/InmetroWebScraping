@@ -11,7 +11,8 @@ namespace CertifiqInmetroWebScrapping.Scrap
     {
         public static void Obter(OrganismoCertificador certificador)
         {
-            string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
+          //  string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
+            string chromeDriverPath = "..//..//chromedriver.exe";
 
             // Create a new ChromeDriver instance
             var options = new ChromeOptions();
@@ -75,7 +76,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         static void BuscaSimples(IWebDriver driver, OrganismoCertificador certificador, int pagina = 1)
         {
-            if (File.Exists($"c:\\temp\\certificados\\{certificador.Valor.Trim()}_{pagina}.json"))
+            if (File.Exists($"..//..//certificados//{certificador.Valor.Trim()}_{pagina}.json"))
                 return;
 
             var tables = driver.FindElements(By.XPath("/html/body/form/table[3]/tbody/tr[2]/td[2]/table[2]/tbody/tr/td/table/tbody/tr/td/table"));
@@ -138,7 +139,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         static void SalvarArquivo(OrganismoCertificador certificador, List<Certificado> certificados, int pagina)
         {
-            JsonFileManager.Write(certificados, $"c:\\temp\\certificados\\{certificador.Valor.Trim()}_{pagina}.json");
+            JsonFileManager.Write(certificados, $"..//..//certificados//{certificador.Valor.Trim()}_{pagina}.json");
         }
     }
 }
