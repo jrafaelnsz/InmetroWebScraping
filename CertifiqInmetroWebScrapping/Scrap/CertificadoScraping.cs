@@ -46,7 +46,6 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
                 if (paginaCorrente > 0)
                 {
-                    NavegacaoDireta(driver, paginaCorrente);
                     NavegarParaPaginaCorrente(driver, paginaCorrente);
                 }
 
@@ -80,13 +79,6 @@ namespace CertifiqInmetroWebScrapping.Scrap
             {
                 driver.Quit();
             }
-        }
-
-        private static void NavegacaoDireta(IWebDriver driver, int paginaCorrente)
-        {
-            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-            js.
-            string title = (string)js.ExecuteScript("return document.title");
         }
 
         private static void NavegarParaPaginaCorrente(IWebDriver driver, int paginaCorrente)
