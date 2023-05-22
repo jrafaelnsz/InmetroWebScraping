@@ -20,20 +20,31 @@ namespace CertifiqInmetroWebScrapping.Scrap
             var options = new ChromeOptions();
             //options.AddArgument("--headless"); // Optional: Run in headless mode without opening a browser window
             IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
-            
-            driver.Navigate().GoToUrl("https://certifiq.inmetro.gov.br/Consulta/ConsultaEmpresas");
-            
-            IWebElement organismoCertificadorSelect = driver.FindElement(By.Id("IdOrganismo"));
-            SelectElement select = new SelectElement(organismoCertificadorSelect);
 
-            foreach (var item in select.Options)
+            try
             {
-                if (!string.IsNullOrEmpty(item.GetAttribute("value")))
-                    listaOrganismoCerificador.Add(new OrganismoCertificador(item.GetAttribute("value"), item.Text));
-            }
+                driver.Navigate().GoToUrl("https://certifiq.inmetro.gov.br/Consulta/ConsultaEmpresas");
 
-            JsonFileManager.Write(listaOrganismoCerificador, "..//..//OrganismoCerificador.json");
-            driver.Quit();
+                IWebElement organismoCertificadorSelect = driver.FindElement(By.Id("IdOrganismo"));
+                SelectElement select = new SelectElement(organismoCertificadorSelect);
+
+                foreach (var item in select.Options)
+                {
+                    if (!string.IsNullOrEmpty(item.GetAttribute("value")))
+                        listaOrganismoCerificador.Add(new OrganismoCertificador(item.GetAttribute("value"), item.Text));
+                }
+
+                JsonFileManager.Write(listaOrganismoCerificador, "..//..//OrganismoCerificador.json");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            finally
+            {
+                driver.Quit();
+            }                                    
         }
     }
 }

@@ -11,7 +11,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
     {
         public static void Obter(OrganismoCertificador certificador)
         {
-          //  string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
+            //  string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
             string chromeDriverPath = "..//..//chromedriver.exe";
 
             // Create a new ChromeDriver instance
@@ -19,58 +19,160 @@ namespace CertifiqInmetroWebScrapping.Scrap
             //options.AddArgument("--headless"); // Optional: Run in headless mode without opening a browser window
             IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
 
-            driver.Navigate().GoToUrl("http://www.inmetro.gov.br/prodcert/certificados/lista.asp");
+            try
+            {                
+                driver.Navigate().GoToUrl("http://www.inmetro.gov.br/prodcert/certificados/lista.asp");
 
-            Thread.Sleep(2000);
+                Thread.Sleep(2000);
 
-            IWebElement organismoCertificadorSelect = driver.FindElement(By.Id("sigla_certificador"));
+                IWebElement organismoCertificadorSelect = driver.FindElement(By.Id("sigla_certificador"));
 
-            SelectElement select2 = new SelectElement(organismoCertificadorSelect);
+                SelectElement select2 = new SelectElement(organismoCertificadorSelect);
 
-            select2.SelectByValue(certificador.Valor);
+                select2.SelectByValue(certificador.Valor);
 
-            Thread.Sleep(1000);
+                Thread.Sleep(1000);
 
-            IWebElement buscarButton = driver.FindElement(By.Name("btn_enviar"));
-            buscarButton.Click();
+                IWebElement buscarButton = driver.FindElement(By.Name("btn_enviar"));
+                buscarButton.Click();
 
-            Thread.Sleep(3000);
+                Thread.Sleep(3000);
 
-            var paginas = 1;
+                var paginas = 1;
 
-            if (driver.FindElements(By.XPath("//img[contains(@src,'ultima')]")).Count > 0)
-            {
-                IWebElement img = driver.FindElement(By.XPath("//img[contains(@src,'ultima')]"));
+                //caso a busca tenha começado em momento anterior e esteja sendo retomada devo buscar o maior arquivo
+                var paginaCorrente = BuscarMaiorPaginaPorCerificador(certificador) + 1;
 
-                var onclick = img.GetAttribute("onclick").Split(",");
-                paginas = onclick.Length > 0 ? Convert.ToInt32(onclick[0].Replace("Pagina(", "")) : paginas;
-
-                for (int i = 1; i <= paginas; i++)
+                if (paginaCorrente > 0)
                 {
-                    BuscaSimples(driver, certificador, i);
-
-                    if (i < paginas)
-                        ProximaPagina(driver, i + 1);
+                    NavegacaoDireta(driver, paginaCorrente);
+                    NavegarParaPaginaCorrente(driver, paginaCorrente);
                 }
+
+
+                if (PossuiPaginacao(driver))
+                {
+                    IWebElement img = driver.FindElement(By.XPath("//img[contains(@src,'ultima')]"));
+
+                    var onclick = img.GetAttribute("onclick").Split(",");
+                    paginas = onclick.Length > 0 ? Convert.ToInt32(onclick[0].Replace("Pagina(", "")) : paginas;
+
+
+                    for (int i = paginaCorrente; i <= paginas; i++)
+                    {
+                        BuscaSimples(driver, certificador, i);
+
+                        if (i < paginas)
+                            ProximaPagina(driver, i + 1);
+                    }
+                }
+                else
+                    BuscaSimples(driver, certificador);
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            finally
+            {
+                driver.Quit();
+            }
+        }
+
+        private static void NavegacaoDireta(IWebDriver driver, int paginaCorrente)
+        {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+            js.
+            string title = (string)js.ExecuteScript("return document.title");
+        }
+
+        private static void NavegarParaPaginaCorrente(IWebDriver driver, int paginaCorrente)
+        {
+            if (!PossuiPaginacao(driver))
+            {
+                return;
+            }
+
+            if (paginaCorrente < 10)
+            {
+                driver.FindElement(By.XPath($"/html/body/form/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[2]/span[{paginaCorrente}]")).Click();
             }
             else
-                BuscaSimples(driver, certificador);
+            {
+                int quociente = Convert.ToInt32(paginaCorrente / 10);                
 
-            // Close the browser and quit the driver
-            driver.Quit();
+                if (paginaCorrente % 10 == 0)
+                {
+                    quociente--; 
+                }
+
+                for (int i = 0; i < quociente; i++)
+                {
+                    AguardaCarregamentoElemento(driver, By.XPath("//*[@id=\"form\"]/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[3]/span"));
+                    IWebElement proximo = driver.FindElement(By.XPath("//*[@id=\"form\"]/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[3]/span"));
+                    proximo.Click();
+                }
+
+                int posicao = paginaCorrente - (quociente * 10);
+                driver.FindElement(By.XPath($"/html/body/form/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[2]/span[{posicao}]")).Click();
+
+            }
+        }
+
+        private static bool PossuiPaginacao(IWebDriver driver)
+        {
+            Thread.Sleep(1000);
+            return driver.FindElements(By.XPath("//img[contains(@src,'ultima')]")).Count > 0;
+        }
+
+        private static int BuscarMaiorPaginaPorCerificador(OrganismoCertificador certificador)
+        {
+            var files = Directory.GetFiles("..//..//certificados");
+            var filteredList = files.Where(item => item.Contains(certificador.Valor.Trim()))
+                .Select(x => x.Replace($"..//..//certificados\\{certificador.Valor.Trim()}_", "")).ToList()
+                .Select(x => x.Replace(".json", "")).ToList();
+
+            var intList = filteredList.Select(s => int.Parse(s)).ToList();
+
+            return intList.Count == 0 ? 0 : intList.Max();
+
         }
 
         static void ProximaPagina(IWebDriver driver, int pagina)
         {
             IWebElement proximo = driver.FindElement(By.XPath("//*[@id=\"form\"]/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[3]/span"));
             var onclick = proximo.GetAttribute("onclick").Split(",");
-            var lote = onclick.Length > 0 ? Convert.ToInt32(onclick[0].Replace("Pagina(", "")) : pagina;
+            //var lote = onclick.Length > 0 ? Convert.ToInt32(onclick[0].Replace("Pagina(", "")) : pagina;
 
-            if (pagina == lote)
+            if ((pagina - 1) % 10 == 0)
+            {
                 proximo.Click();
+                Thread.Sleep(2000);
+                driver.FindElement(By.XPath($"/html/body/form/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[2]/span[1]")).Click();
+            }
             else
-                driver.FindElement(By.XPath($"/html/body/form/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[2]/span[{pagina}]")).Click();
-                        
+            {
+                if (pagina > 10)
+                {
+                    int quociente = pagina / 10;
+                    int posicao = pagina - (quociente * 10);
+
+                    if (posicao == 0)
+                        posicao = 10;
+
+                    AguardaCarregamentoElemento(driver, By.XPath($"/html/body/form/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[2]/span[{posicao}]"));
+                    driver.FindElement(By.XPath($"/html/body/form/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[2]/span[{posicao}]")).Click();
+
+                }
+                else
+                {
+                    AguardaCarregamentoElemento(driver, By.XPath($"/html/body/form/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[2]/span[{pagina}]"));
+                    driver.FindElement(By.XPath($"/html/body/form/table[3]/tbody/tr[2]/td[2]/table[3]/tbody/tr[1]/td[2]/span[{pagina}]")).Click();
+                }                    
+            }
+
             Thread.Sleep(3000);
         }
 
@@ -100,7 +202,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
                         certificado.Tipo = list[3].Replace("Emissão", "").Trim();
                         certificado.Emissao = list[4].Replace("Validade", "").Trim();
                         certificado.Validade = list[5].Replace("Status do Certificado", "").Trim();
-                        certificado.StatusCertificado = list[6].Trim();                        
+                        certificado.StatusCertificado = list[6].Trim();
                     }
 
                     IList<IWebElement> colunas = table.FindElements(By.ClassName("listagem"));
@@ -139,7 +241,31 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         static void SalvarArquivo(OrganismoCertificador certificador, List<Certificado> certificados, int pagina)
         {
+            //verificar se a pasta certificados existe se não existir cria
+            if (!Directory.Exists("..//..//certificados"))
+                Directory.CreateDirectory("..//..//certificados");
+
+
             JsonFileManager.Write(certificados, $"..//..//certificados//{certificador.Valor.Trim()}_{pagina}.json");
         }
+
+
+        private static void AguardaCarregamentoElemento(IWebDriver driver, By by)
+        {
+            if (driver.Title.Equals("The page cannot be displayed"))
+                throw new Exception("Falha no carregamento da página");
+
+            var count = 0;
+            while (driver.FindElements(by).Count == 0)
+            {
+                Thread.Sleep(5000);
+                count++;
+
+                //depois de 60 * 5 segundos (3 minutos) sem que o elemento seja carregado
+                //a exceção é lançada
+                if (count >= 60)
+                    throw new SystemException("Elemento não carregado");
+            }
+        }        
     }
 }

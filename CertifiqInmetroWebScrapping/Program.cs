@@ -13,7 +13,7 @@ namespace CertifiqInmetroWebScrapping
         static void Main(string[] args)
         {
             MontaMenu();
-            Console.ReadKey();            
+            Console.ReadKey();
         }
 
         static void MontaMenu()
@@ -23,30 +23,40 @@ namespace CertifiqInmetroWebScrapping
             Console.WriteLine("1 - Consultar certifiq.inmetro.gov.br/Consulta/ConsultaEmpresas");
             Console.WriteLine("2 - Consultar inmetro.gov.br/prodcert/certificados/busca.asp?");
 
-            var opc = Console.ReadLine();
+            var opcao = Console.ReadLine();
+            ExecucaoResiliente(opcao);
+        }
 
-            switch (opc)
+        static void ExecucaoResiliente(string opcao)
+        {
+            try
             {
-                case "1":
-                    ConsultaSiteNovo();
-                    break;
-                case "2":
-                    ConsultaSiteVelho();
-                    break;
-                default:
-                    MontaMenu();
-                    break;
+                switch (opcao)
+                {
+                    case "1":
+                        ConsultaSiteNovo();
+                        break;
+                    case "2":
+                        ConsultaSiteVelho();
+                        break;
+                    default:
+                        MontaMenu();
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                ExecucaoResiliente(opcao);
             }
         }
 
-        static void ConsultaSiteNovo() 
+        static void ConsultaSiteNovo()
         {
             //1: Obter Organismos certificadores (criar json com resultado)
             //2: Buscar empresas do organismo certificador (criar json com resultado)
 
-           // var organismoCertificadorPath = "c:\\temp\\OrganismoCerificador.json";
+            // var organismoCertificadorPath = "c:\\temp\\OrganismoCerificador.json";
             var organismoCertificadorPath = "..//..//OrganismoCerificador.json";
-
 
             //Verificar se existe o arquivo de OrganismoCerificador            
             if (!File.Exists(organismoCertificadorPath))
