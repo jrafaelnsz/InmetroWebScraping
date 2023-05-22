@@ -5,6 +5,7 @@ using CertifiqInmetroWebScrapping.Util;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.Configuration;
 
 namespace CertifiqInmetroWebScrapping
 {
@@ -56,7 +57,10 @@ namespace CertifiqInmetroWebScrapping
             //2: Buscar empresas do organismo certificador (criar json com resultado)
 
             // var organismoCertificadorPath = "c:\\temp\\OrganismoCerificador.json";
-            var organismoCertificadorPath = "..//..//OrganismoCerificador.json";
+            // var organismoCertificadorPath = "c:\\temp\\OrganismoCerificador.json";
+            var config = ConfigurationManager.AppSettings["organismoCertificador"];
+
+            var organismoCertificadorPath = ConfigurationManager.AppSettings["organismoCertificador"];
 
             //Verificar se existe o arquivo de OrganismoCerificador            
             if (!File.Exists(organismoCertificadorPath))
@@ -80,7 +84,7 @@ namespace CertifiqInmetroWebScrapping
             //1: Obter Organismos certificadores (criar json com resultado)
             //2: Buscar empresas do organismo certificador (criar json com resultado)
 
-            var organismoAcreditadoPath = "..//..//OrganismoAcreditado.json";
+                var organismoAcreditadoPath = ConfigurationManager.AppSettings["organismoAcreditado"];
 
             //Verificar se existe o arquivo de OrganismoCerificador            
             if (!File.Exists(organismoAcreditadoPath))

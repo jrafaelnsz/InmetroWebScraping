@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using System.Configuration;
 
 namespace CertifiqInmetroWebScrapping.Scrap
 {
@@ -12,7 +13,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
         public static void Obter(OrganismoCertificador certificador)
         {
             //  string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
-            string chromeDriverPath = "..//..//chromedriver.exe";
+            string chromeDriverPath = ConfigurationManager.AppSettings["chromeDriver"];
 
             // Create a new ChromeDriver instance
             var options = new ChromeOptions();
@@ -23,22 +24,22 @@ namespace CertifiqInmetroWebScrapping.Scrap
             {                
                 driver.Navigate().GoToUrl("http://www.inmetro.gov.br/prodcert/certificados/lista.asp");
 
-                Thread.Sleep(2000);
+            Thread.Sleep(2000);
 
-                IWebElement organismoCertificadorSelect = driver.FindElement(By.Id("sigla_certificador"));
+            IWebElement organismoCertificadorSelect = driver.FindElement(By.Id("sigla_certificador"));
 
-                SelectElement select2 = new SelectElement(organismoCertificadorSelect);
+            SelectElement select2 = new SelectElement(organismoCertificadorSelect);
 
-                select2.SelectByValue(certificador.Valor);
+            select2.SelectByValue(certificador.Valor);
 
-                Thread.Sleep(1000);
+            Thread.Sleep(1000);
 
-                IWebElement buscarButton = driver.FindElement(By.Name("btn_enviar"));
-                buscarButton.Click();
+            IWebElement buscarButton = driver.FindElement(By.Name("btn_enviar"));
+            buscarButton.Click();
 
-                Thread.Sleep(3000);
+            Thread.Sleep(3000);
 
-                var paginas = 1;
+            var paginas = 1;
 
                 //caso a busca tenha começado em momento anterior e esteja sendo retomada devo buscar o maior arquivo
                 var paginaCorrente = BuscarMaiorPaginaPorCerificador(certificador) + 1;
@@ -54,8 +55,8 @@ namespace CertifiqInmetroWebScrapping.Scrap
                 {
                     IWebElement img = driver.FindElement(By.XPath("//img[contains(@src,'ultima')]"));
 
-                    var onclick = img.GetAttribute("onclick").Split(",");
-                    paginas = onclick.Length > 0 ? Convert.ToInt32(onclick[0].Replace("Pagina(", "")) : paginas;
+                var onclick = img.GetAttribute("onclick").Split(",");
+                paginas = onclick.Length > 0 ? Convert.ToInt32(onclick[0].Replace("Pagina(", "")) : paginas;
 
 
                     for (int i = paginaCorrente; i <= paginas; i++)
@@ -178,7 +179,8 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         static void BuscaSimples(IWebDriver driver, OrganismoCertificador certificador, int pagina = 1)
         {
-            if (File.Exists($"..//..//certificados//{certificador.Valor.Trim()}_{pagina}.json"))
+            string CertificadosPasta = ConfigurationManager.AppSettings["certificadosPasta"];
+            if (File.Exists($"{CertificadosPasta}{certificador.Valor.Trim()}_{pagina}.json"))
                 return;
 
             var tables = driver.FindElements(By.XPath("/html/body/form/table[3]/tbody/tr[2]/td[2]/table[2]/tbody/tr/td/table/tbody/tr/td/table"));
@@ -241,9 +243,11 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         static void SalvarArquivo(OrganismoCertificador certificador, List<Certificado> certificados, int pagina)
         {
+            string CertificadosPasta = ConfigurationManager.AppSettings["certificadosPasta"];
+
             //verificar se a pasta certificados existe se não existir cria
-            if (!Directory.Exists("..//..//certificados"))
-                Directory.CreateDirectory("..//..//certificados");
+            if (!Directory.Exists(CertificadosPasta))
+                Directory.CreateDirectory(CertificadosPasta);
 
 
             JsonFileManager.Write(certificados, $"..//..//certificados//{certificador.Valor.Trim()}_{pagina}.json");
