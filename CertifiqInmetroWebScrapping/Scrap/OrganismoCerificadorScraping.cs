@@ -3,6 +3,7 @@ using CertifiqInmetroWebScrapping.Util;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.Configuration;
 
 namespace CertifiqInmetroWebScrapping.Scrap
 {
@@ -13,7 +14,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
             var listaOrganismoCerificador = new List<OrganismoCertificador>();
 
             //string chromeDriverPath = @"C:\Users\mcmin\.nuget\packages\selenium.webdriver.chromedriver\113.0.5672.6300\driver\win32\chromedriver.exe";
-            string chromeDriverPath = @"..//..//chromedriver.exe";
+            string chromeDriverPath = ConfigurationManager.AppSettings["chromeDriver"]; 
 
 
             // Create a new ChromeDriver instance

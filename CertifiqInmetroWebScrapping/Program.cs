@@ -5,6 +5,7 @@ using CertifiqInmetroWebScrapping.Util;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.Configuration;
 
 namespace CertifiqInmetroWebScrapping
 {
@@ -41,51 +42,70 @@ namespace CertifiqInmetroWebScrapping
 
         static void ConsultaSiteNovo() 
         {
-            //1: Obter Organismos certificadores (criar json com resultado)
-            //2: Buscar empresas do organismo certificador (criar json com resultado)
-
-           // var organismoCertificadorPath = "c:\\temp\\OrganismoCerificador.json";
-            var organismoCertificadorPath = "..//..//OrganismoCerificador.json";
-
-
-            //Verificar se existe o arquivo de OrganismoCerificador            
-            if (!File.Exists(organismoCertificadorPath))
+            try
             {
-                Console.WriteLine("Obtendo Organismo Certificador");
-                OrganismoCerificadorScraping.ObterOrganismoCertificador();
+                //1: Obter Organismos certificadores (criar json com resultado)
+                //2: Buscar empresas do organismo certificador (criar json com resultado)
+
+                // var organismoCertificadorPath = "c:\\temp\\OrganismoCerificador.json";
+                var config = ConfigurationManager.AppSettings["organismoCertificador"];
+
+                var organismoCertificadorPath = ConfigurationManager.AppSettings["organismoCertificador"];
+
+
+                //Verificar se existe o arquivo de OrganismoCerificador            
+                if (!File.Exists(organismoCertificadorPath))
+                {
+                    Console.WriteLine("Obtendo Organismo Certificador");
+                    OrganismoCerificadorScraping.ObterOrganismoCertificador();
+                }
+
+                Console.WriteLine("Lista de Organismo Certificador já existe");
+                var listaOrganismoCerificador = JsonFileManager.Read<List<OrganismoCertificador>>(organismoCertificadorPath);
+
+                foreach (var item in listaOrganismoCerificador)
+                {
+                    Console.WriteLine($"Obtendo empresas do certificador {item.Descricao}");
+                    EmpresaScraping.Obter(item);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
             }
 
-            Console.WriteLine("Lista de Organismo Certificador já existe");
-            var listaOrganismoCerificador = JsonFileManager.Read<List<OrganismoCertificador>>(organismoCertificadorPath);
-
-            foreach (var item in listaOrganismoCerificador)
-            {
-                Console.WriteLine($"Obtendo empresas do certificador {item.Descricao}");
-                EmpresaScraping.Obter(item);
-            }
         }
 
         static void ConsultaSiteVelho()
         {
-            //1: Obter Organismos certificadores (criar json com resultado)
-            //2: Buscar empresas do organismo certificador (criar json com resultado)
-
-            var organismoAcreditadoPath = "..//..//OrganismoAcreditado.json";
-
-            //Verificar se existe o arquivo de OrganismoCerificador            
-            if (!File.Exists(organismoAcreditadoPath))
+            try
             {
-                Console.WriteLine("Obtendo Organismo Acreditado");
-                new OrganismoAcreditadoScraping().ObterOrganismo("sigla_certificador", organismoAcreditadoPath);
+                //1: Obter Organismos certificadores (criar json com resultado)
+                //2: Buscar empresas do organismo certificador (criar json com resultado)
+
+                var organismoAcreditadoPath = ConfigurationManager.AppSettings["organismoAcreditado"];
+
+                //Verificar se existe o arquivo de OrganismoCerificador            
+                if (!File.Exists(organismoAcreditadoPath))
+                {
+                    Console.WriteLine("Obtendo Organismo Acreditado");
+                    new OrganismoAcreditadoScraping().ObterOrganismo("sigla_certificador", organismoAcreditadoPath);
+                }
+
+                Console.WriteLine("Lista de Organismo Certificador já existe");
+                var listaOrganismoCerificador = JsonFileManager.Read<List<OrganismoCertificador>>(organismoAcreditadoPath);
+
+                foreach (var item in listaOrganismoCerificador)
+                {
+                    Console.WriteLine($"Obtendo empresas do certificador {item.Descricao}");
+                    CertificadoScraping.Obter(item);
+                }
+
             }
-
-            Console.WriteLine("Lista de Organismo Certificador já existe");
-            var listaOrganismoCerificador = JsonFileManager.Read<List<OrganismoCertificador>>(organismoAcreditadoPath);
-
-            foreach (var item in listaOrganismoCerificador)
+            catch (Exception ex)
             {
-                Console.WriteLine($"Obtendo empresas do certificador {item.Descricao}");
-                CertificadoScraping.Obter(item);
+                throw;
             }
         }
     }
