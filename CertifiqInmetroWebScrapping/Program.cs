@@ -23,6 +23,8 @@ namespace CertifiqInmetroWebScrapping
 
             Console.WriteLine("1 - Consultar certifiq.inmetro.gov.br/Consulta/ConsultaEmpresas");
             Console.WriteLine("2 - Consultar inmetro.gov.br/prodcert/certificados/busca.asp?");
+            Console.WriteLine("3 - Gerar planilha resultante");
+
 
             var opcao = Console.ReadLine();
             ExecucaoResiliente(opcao);
@@ -39,6 +41,9 @@ namespace CertifiqInmetroWebScrapping
                         break;
                     case "2":
                         ConsultaSiteVelho();
+                        break;
+                    case "3":
+                        GerarPlanilha();
                         break;
                     default:
                         MontaMenu();
@@ -101,6 +106,13 @@ namespace CertifiqInmetroWebScrapping
                 Console.WriteLine($"Obtendo empresas do certificador {item.Descricao}");
                 CertificadoScraping.Obter(item);
             }
+        }
+
+        static void GerarPlanilha()
+        {
+            Console.WriteLine("Gerando a planilha");
+            var gerarPlanilha = new ExcelFileManager();
+            gerarPlanilha.GerarPlilha();
         }
     }
 }
