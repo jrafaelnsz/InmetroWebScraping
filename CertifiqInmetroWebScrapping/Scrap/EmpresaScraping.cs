@@ -1,4 +1,5 @@
 ﻿using CertifiqInmetroWebScrapping.Modelo;
+using CertifiqInmetroWebScrapping.MongoDataAccess.Repository;
 using CertifiqInmetroWebScrapping.Util;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -104,7 +105,9 @@ namespace CertifiqInmetroWebScrapping.Scrap
                     }
                 }
 
-                JsonFileManager.Write(empresas, $"..//..//{certificador.Valor}.json");
+                var db = new MyMongoDB();
+
+                //JsonFileManager.Write(empresas, $"..//..//{certificador.Valor}.json");
 
             }
             catch (Exception ex)

@@ -245,7 +245,6 @@ namespace CertifiqInmetroWebScrapping.Scrap
             JsonFileManager.Write(certificados, $"..//..//certificados//{certificador.Valor.Trim()}_{pagina}.json");
         }
 
-
         private static void AguardaCarregamentoElemento(IWebDriver driver, By by)
         {
             if (driver.Title.Equals("The page cannot be displayed"))
