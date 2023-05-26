@@ -93,7 +93,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
             driver.Quit();
 
-            var db = new MyMongoDB();
+            var db = new MyMongoDbContext();
             db.SalvarPaginaCertificado(new CertificadorPaginaModel(selectId, paginas));
 
         }

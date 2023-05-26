@@ -4,7 +4,7 @@ using CertifiqInmetroWebScrapping.MongoDataAccess.Model;
 
 namespace CertifiqInmetroWebScrapping.MongoDataAccess.Repository
 {
-    public class MyMongoDB
+    public class MyMongoDbContext
     {
         private const string ConnectionString = "";
         private const string DatabaseName = "DataScraper";        

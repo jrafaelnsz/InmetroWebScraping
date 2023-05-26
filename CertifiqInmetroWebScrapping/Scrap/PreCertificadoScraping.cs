@@ -24,7 +24,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         private HtmlConvenioModel ObterDocumento()
         {
-            return new MyMongoDB().ObterHtmlConvenio();
+            return new MyMongoDbContext().ObterHtmlConvenio();
         }
 
         private List<PreCertificadoModel> ObterPreCertificado(string html)
@@ -66,14 +66,14 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         private void SalvarPreCertificado(List<PreCertificadoModel> preCertificados)
         {
-            var db = new MyMongoDB();
+            var db = new MyMongoDbContext();
             var task = db.SalvarPreCertificados(preCertificados);
             task.Wait();
         }
 
         private void RemoverDocumento(HtmlConvenioModel htmlConvenio)
         {
-            var db = new MyMongoDB();
+            var db = new MyMongoDbContext();
             db.DeleteHtmlConvenio(htmlConvenio);
         }
     }

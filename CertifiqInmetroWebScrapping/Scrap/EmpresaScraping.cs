@@ -105,7 +105,7 @@ namespace CertifiqInmetroWebScrapping.Scrap
                     }
                 }
 
-                var db = new MyMongoDB();
+                var db = new MyMongoDbContext();
 
                 //JsonFileManager.Write(empresas, $"..//..//{certificador.Valor}.json");
 

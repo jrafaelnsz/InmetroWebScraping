@@ -70,7 +70,7 @@ namespace CertifiqInmetroWebScrapping
 
         private static void ProcessarHtmlPreCertificado()
         {
-            var task = new MyMongoDB().ObterQuantidadeHtmlConvenioAsync();
+            var task = new MyMongoDbContext().ObterQuantidadeHtmlConvenioAsync();
             task.Wait();
 
             
@@ -83,11 +83,11 @@ namespace CertifiqInmetroWebScrapping
 
         private static async Task ConsultaConveniosAspViaRequestAsync()
         {
-            var paginas = new MyMongoDB().ObterPaginasConvenio();
+            var paginas = new MyMongoDbContext().ObterPaginasConvenio();
 
             foreach (var item in paginas)
             {
-                var db = new MyMongoDB();
+                var db = new MyMongoDbContext();
                 for (int i = 1; i <= item.Paginas; i++)
                 {                    
                     // db.TestConnection();
