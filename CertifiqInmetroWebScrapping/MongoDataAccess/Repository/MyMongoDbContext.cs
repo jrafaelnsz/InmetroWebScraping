@@ -6,7 +6,7 @@ namespace CertifiqInmetroWebScrapping.MongoDataAccess.Repository
 {
     public class MyMongoDbContext
     {
-        private const string connectionString = "mongodb+srv://idev_merit:9NP5RgJUB2WxUFLN@datascraper.3iwsokd.mongodb.net/?retryWrites=true&w=majority";
+        private const string connectionString = "";
         private const string databaseName = "DataScraper";        
         private const string HtmlCollection = "HtmlConvenio";
         private const string CertificadorPaginaCollection = "CertificadorPagina";
