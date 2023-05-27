@@ -1,4 +1,5 @@
-﻿using CertifiqInmetroWebScrapping.MongoDataAccess.Model;
+﻿using CertifiqInmetroWebScrapping.MongoDataAccess.DataAccessLayer;
+using CertifiqInmetroWebScrapping.MongoDataAccess.Model;
 using CertifiqInmetroWebScrapping.MongoDataAccess.Repository;
 using HtmlAgilityPack;
 using System.Web;
@@ -66,9 +67,11 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         private void SalvarPreCertificado(List<PreCertificadoModel> preCertificados)
         {
-            var db = new MyMongoDbContext();
-            var task = db.SalvarPreCertificados(preCertificados);
-            task.Wait();
+            var dbContext = new MyMongoDbContext();
+            var repositorio = new PreCertificadoRepository(dbContext);
+            repositorio.Add(preCertificados);
+            //var task = db.SalvarPreCertificados(preCertificados);
+            //task.Wait();
         }
 
         private void RemoverDocumento(HtmlConvenioModel htmlConvenio)

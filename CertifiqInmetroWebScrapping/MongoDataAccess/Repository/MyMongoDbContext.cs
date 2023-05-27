@@ -6,16 +6,27 @@ namespace CertifiqInmetroWebScrapping.MongoDataAccess.Repository
 {
     public class MyMongoDbContext
     {
-        private const string ConnectionString = "";
-        private const string DatabaseName = "DataScraper";        
+        private const string connectionString = "mongodb+srv://idev_merit:9NP5RgJUB2WxUFLN@datascraper.3iwsokd.mongodb.net/?retryWrites=true&w=majority";
+        private const string databaseName = "DataScraper";        
         private const string HtmlCollection = "HtmlConvenio";
         private const string CertificadorPaginaCollection = "CertificadorPagina";
-        private const string PreCertificadoCollection = "PreCertificado";
+        private const string preCertificadoCollection = "PreCertificado";
+        private const string CertificadoCollection = "Certificado";
+        private readonly IMongoDatabase _database;
 
-        private IMongoCollection<T> Connect<T>(in string collection)
+        public MyMongoDbContext()
         {
-            var client = new MongoClient(ConnectionString);
-            var db = client.GetDatabase(DatabaseName);
+            var client = new MongoClient(connectionString);
+            _database = client.GetDatabase(databaseName);
+        }
+
+        public IMongoCollection<PreCertificadoModel> PreCertificado => _database.GetCollection<PreCertificadoModel>(preCertificadoCollection);
+        public IMongoCollection<CertificadoModel> Certificado => _database.GetCollection<CertificadoModel>(CertificadoCollection);
+
+        public IMongoCollection<T> Connect<T>(in string collection)
+        {
+            var client = new MongoClient(connectionString);
+            var db = client.GetDatabase(databaseName);
             return db.GetCollection<T>(collection);
         }
 
@@ -80,13 +91,13 @@ namespace CertifiqInmetroWebScrapping.MongoDataAccess.Repository
 
         public async Task SalvarPreCertificados(List<PreCertificadoModel> lista)
         {
-            var colecao = Connect<PreCertificadoModel>(PreCertificadoCollection);
+            var colecao = Connect<PreCertificadoModel>(preCertificadoCollection);
             await colecao.InsertManyAsync(documents: lista);
         }
 
         public void TestConnection()
         {
-            var settings = MongoClientSettings.FromConnectionString(ConnectionString);
+            var settings = MongoClientSettings.FromConnectionString(connectionString);
             // Set the ServerApi field of the settings object to Stable API version 1
             settings.ServerApi = new ServerApi(ServerApiVersion.V1);
             // Create a new client and connect to the server

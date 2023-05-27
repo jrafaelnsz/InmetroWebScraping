@@ -10,7 +10,7 @@ namespace CertifiqInmetroWebScrapping
     internal class Program
     {
         static async Task Main(string[] args)
-        {                        
+        {
             await MontaMenu();
             Console.ReadKey();
         }
@@ -25,7 +25,8 @@ namespace CertifiqInmetroWebScrapping
             Console.WriteLine("3 - Gerar planilha resultante");
             Console.WriteLine("4 - Obter Pre informacao convenios e certificados na busca.asp via request");
             Console.WriteLine("5 - Processar PreCertificados obtido via request");
-            
+            Console.WriteLine("6 - Consultar por número do certificado ");
+
 
 
             var opcao = Console.ReadLine();
@@ -34,6 +35,8 @@ namespace CertifiqInmetroWebScrapping
 
         static async Task ExecucaoResilienteAsync(string opcao)
         {
+            Console.Clear();
+
             try
             {
                 switch (opcao)
@@ -56,6 +59,9 @@ namespace CertifiqInmetroWebScrapping
                     case "5":
                         ProcessarHtmlPreCertificado();
                         break;
+                    case "6":
+                        ConsultaPorNumeroCertificado();
+                        break;
                     default:
                         await MontaMenu();
                         break;
@@ -73,7 +79,7 @@ namespace CertifiqInmetroWebScrapping
             var task = new MyMongoDbContext().ObterQuantidadeHtmlConvenioAsync();
             task.Wait();
 
-            
+
             for (int i = 0; i < task.Result; i++)
             {
                 Console.WriteLine($"Processando PreCertificado {i} de {task.Result}");
@@ -89,12 +95,12 @@ namespace CertifiqInmetroWebScrapping
             {
                 var db = new MyMongoDbContext();
                 for (int i = 1; i <= item.Paginas; i++)
-                {                    
+                {
                     // db.TestConnection();
                     var html = await ChupaCabra.CriarRequisicao(i, item.CodConvenio);
 
                     var myHtml = new HtmlConvenioModel(item.CodConvenio, i, html);
-                    db.SalvarPagina(myHtml);                    
+                    db.SalvarPagina(myHtml);
                 }
                 db.DeletePaginaConsultada(item);
             }
@@ -132,6 +138,12 @@ namespace CertifiqInmetroWebScrapping
 
         static void ConsultaSiteVelho()
         {
+
+            while (!DisponibilidadeSite.Verificar())
+            {
+                Spinner();
+            }
+
             //1: Obter Organismos certificadores (criar json com resultado)
             //2: Buscar empresas do organismo certificador (criar json com resultado)
 
@@ -154,6 +166,57 @@ namespace CertifiqInmetroWebScrapping
             }
         }
 
+        static void ConsultaPorNumeroCertificado()
+        {
+            while (!DisponibilidadeSite.Verificar())
+            {
+                Spinner();
+            }
+            
+            CertificadoDetalheScraping.Obter();            
+        }
+
+        private static void Spinner(string msgPadrao = "SISTEMA INDISPONÍVEL POR FAVOR AGUARDE: ")
+        {
+            Console.Clear();
+
+            var contador = 0;
+            var acumuador = 0;
+
+            while (true)
+            {                
+                Console.Clear();
+                switch (contador)
+                {
+                    case 0:
+                        Console.Write($"{msgPadrao}\\");
+                        break;
+                    case 1:
+                        Console.Write($"{msgPadrao}|");
+                        break;
+                    case 2:
+                        Console.Write($"{msgPadrao}/");
+                        break;
+                    case 3:
+                        Console.Write($"{msgPadrao}-");
+                        break;
+                    default:
+                        break;
+                }
+
+                Thread.Sleep(100);
+                
+                contador++;
+                acumuador++;
+
+                if (contador == 4)                
+                    contador = 0;
+
+                if (acumuador >= 600)
+                    break;
+            }
+        }
+
         static void GerarPlanilha()
         {
             Console.WriteLine("Gerando a planilha");
@@ -163,6 +226,11 @@ namespace CertifiqInmetroWebScrapping
 
         static void ConsultaSiteVelhoPaginas()
         {
+            while (!DisponibilidadeSite.Verificar())
+            {
+                Spinner();
+            }
+
             //1: Obter Organismos certificadores (criar json com resultado)
             //2: Buscar empresas do organismo certificador (criar json com resultado)
 
