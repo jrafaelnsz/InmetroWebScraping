@@ -76,14 +76,22 @@ namespace CertifiqInmetroWebScrapping
 
         private static void ProcessarHtmlPreCertificado()
         {
-            var task = new MyMongoDbContext().ObterQuantidadeHtmlConvenioAsync();
-            task.Wait();
-
-
-            for (int i = 0; i < task.Result; i++)
+            Console.WriteLine("PROCESSANDO HTMLs");
+            while (true)
             {
-                Console.WriteLine($"Processando PreCertificado {i} de {task.Result}");
-                new PreCertificadoScraping().ProcessarDocumento();
+                Console.WriteLine("OBTENDO HTMLs A SEREM PROCESSADOS");
+                var task = new MyMongoDbContext().ObterQuantidadeHtmlConvenioAsync();
+                task.Wait();
+
+                Console.WriteLine($"HTMLs ENCONTRADOS: {task.Result}");
+
+                for (int i = 0; i < task.Result; i++)
+                {
+                    Console.WriteLine($"Processando PreCertificado {i+1} de {task.Result}");
+                    new PreCertificadoScraping().ProcessarDocumento();
+                }
+
+                Spinner("AGUARDANDO CARGA ", 3000);                
             }
         }
 
@@ -93,14 +101,17 @@ namespace CertifiqInmetroWebScrapping
 
             foreach (var item in paginas)
             {
+                Console.WriteLine($"OBTENDO HTMLS DA CERTFIFCADORA {item.CodConvenio.Trim()}");
                 var db = new MyMongoDbContext();
                 for (int i = 1; i <= item.Paginas; i++)
                 {
+                    Console.WriteLine($"PAGINA {i} DE {item.Paginas}...");
                     // db.TestConnection();
                     var html = await ChupaCabra.CriarRequisicao(i, item.CodConvenio);
 
                     var myHtml = new HtmlConvenioModel(item.CodConvenio, i, html);
                     db.SalvarPagina(myHtml);
+                    Console.WriteLine("CONCLUIDA!");
                 }
                 db.DeletePaginaConsultada(item);
             }
@@ -176,7 +187,7 @@ namespace CertifiqInmetroWebScrapping
             CertificadoDetalheScraping.Obter();            
         }
 
-        private static void Spinner(string msgPadrao = "SISTEMA INDISPONÍVEL POR FAVOR AGUARDE: ")
+        private static void Spinner(string msgPadrao = "SISTEMA INDISPONÍVEL POR FAVOR AGUARDE: ", int maximo = 600)
         {
             Console.Clear();
 
@@ -212,7 +223,7 @@ namespace CertifiqInmetroWebScrapping
                 if (contador == 4)                
                     contador = 0;
 
-                if (acumuador >= 600)
+                if (acumuador >= maximo)
                     break;
             }
         }

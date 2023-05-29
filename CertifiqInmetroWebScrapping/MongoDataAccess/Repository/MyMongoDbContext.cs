@@ -9,6 +9,7 @@ namespace CertifiqInmetroWebScrapping.MongoDataAccess.Repository
         private const string connectionString = "";
         private const string databaseName = "DataScraper";        
         private const string HtmlCollection = "HtmlConvenio";
+        private const string HtmlCollectionFix = "HtmlToBeFixed";
         private const string CertificadorPaginaCollection = "CertificadorPagina";
         private const string preCertificadoCollection = "PreCertificado";
         private const string CertificadoCollection = "Certificado";
@@ -54,6 +55,12 @@ namespace CertifiqInmetroWebScrapping.MongoDataAccess.Repository
             var colecao = Connect<HtmlConvenioModel>(HtmlCollection);
             var firstDocument = colecao.Find(new BsonDocument()).FirstOrDefault();
             return firstDocument;
+        }
+
+        public async Task SalvarHtmlConvenioTBFixed(HtmlConvenioModel htmlConvenio)
+        {
+            var colecao = Connect<HtmlConvenioModel>(HtmlCollectionFix);
+            await colecao.InsertOneAsync(document: htmlConvenio);
         }
 
         public async Task<long> ObterQuantidadeHtmlConvenioAsync()
