@@ -21,5 +21,10 @@ namespace CertifiqInmetroWebScrapping.MongoDataAccess.Model
         public string Endereco { get; set; }
         public string Status { get; set; }
         public string PapelEmpresa { get; set; }
+
+        public override string ToString()
+        {
+            return $"{NumeroCertificado} - {Tipo} - {Emissao} - {Validade} - {StatusCertificado} - {DocNormativo} - {CpfCnpj} - {RazaoSocialNome} - {NomeFantasia} - {Endereco} - {Status} - {PapelEmpresa}";
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CertifiqInmetroWebScrapping.Modelo;
+using CertifiqInmetroWebScrapping.MongoDataAccess.DataAccessLayer;
 using CertifiqInmetroWebScrapping.MongoDataAccess.Model;
 using CertifiqInmetroWebScrapping.MongoDataAccess.Repository;
 using CertifiqInmetroWebScrapping.Scrap;
@@ -26,7 +27,7 @@ namespace CertifiqInmetroWebScrapping
             Console.WriteLine("4 - Obter Pre informacao convenios e certificados na busca.asp via request");
             Console.WriteLine("5 - Processar PreCertificados obtido via request");
             Console.WriteLine("6 - Consultar por número do certificado ");
-
+            Console.WriteLine("7 - Teste listagem de certificados");
 
 
             var opcao = Console.ReadLine();
@@ -62,6 +63,9 @@ namespace CertifiqInmetroWebScrapping
                     case "6":
                         ConsultaPorNumeroCertificado();
                         break;
+                    case "7":
+                        ListarCertificado();
+                        break;
                     default:
                         await MontaMenu();
                         break;
@@ -71,6 +75,17 @@ namespace CertifiqInmetroWebScrapping
             {
                 Console.WriteLine(ex.Message);
                 await ExecucaoResilienteAsync(opcao);
+            }
+        }
+
+        private static void ListarCertificado()
+        {
+            var db = new MyMongoDbContext();
+            var certificados = new CertificadoRepository(db).ObterCertificados();
+
+            foreach (var item in certificados)
+            {
+                Console.WriteLine(item.ToString());
             }
         }
 
@@ -97,9 +112,11 @@ namespace CertifiqInmetroWebScrapping
 
         private static async Task ConsultaConveniosAspViaRequestAsync()
         {
-            var paginas = new MyMongoDbContext().ObterPaginasConvenio();
+            var paginas = new MyMongoDbContext().ObterPaginasConvenio();            
 
-            foreach (var item in paginas)
+            var paginas2 = paginas.OrderBy(p => p.Paginas).ToList();
+
+            foreach (var item in paginas2)
             {
                 Console.WriteLine($"OBTENDO HTMLS DA CERTFIFCADORA {item.CodConvenio.Trim()}");
                 var db = new MyMongoDbContext();
