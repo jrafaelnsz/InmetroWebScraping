@@ -3,6 +3,8 @@ using CertifiqInmetroWebScrapping.MongoDataAccess.DataAccessLayer;
 using CertifiqInmetroWebScrapping.MongoDataAccess.Model;
 using CertifiqInmetroWebScrapping.MongoDataAccess.Repository;
 using CertifiqInmetroWebScrapping.Util;
+using Dapper;
+using MongoDB.Driver.Core.Configuration;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -146,10 +148,41 @@ namespace CertifiqInmetroWebScrapping.Scrap
 
         static void SalvarCertificado(List<CertificadoModel> certificados)
         {
+            string connectionString = ConfigurationManager.ConnectionStrings["certificadosScrapping"].ConnectionString;
+
             var dbContext = new MyMongoDbContext();
             var repositorio = new CertificadoRepository(dbContext);
-            repositorio.AddCertificados(certificados);            
-        }
+            repositorio.AddCertificados(certificados);
 
+            using (var conexaoBD = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
+            {
+                conexaoBD.Execute(@"insert into CertificadoDB(Id
+                                                       ,Certificador
+                                                       ,NumeroCertificado
+                                                       ,Tipo
+                                                       ,Emissao
+                                                       ,Validade
+                                                       ,StatusCertificado
+                                                       ,DocNormativo
+                                                       ,CpfCnpj
+                                                       ,RazaoSocialNome
+                                                       ,NomeFantasia
+                                                       ,Endereco
+                                                       ,Status
+                                                       ,PapelEmpresa) values 
+                                            (@Id
+                                            ,@Certificador
+                                            ,@NumeroCertificado
+                                            ,@Tipo
+                                            ,@Emissao,@Validade,@StatusCertificado
+                                            ,@DocNormativo
+                                            ,@CpfCnpj
+                                            ,@RazaoSocialNome
+                                            ,@NomeFantasia
+                                            ,@Endereco
+                                            ,@Status
+                                            ,@PapelEmpresa)", certificados);
+            }
+        }
     }
 }

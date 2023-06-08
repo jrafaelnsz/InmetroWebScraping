@@ -11,6 +11,14 @@ using CertifiqInmetroWebScrapping.Util;
 using CertifiqInmetroWebScrapping.Modelo;
 using Spire.Xls;
 using System.Configuration;
+using System.Runtime.ConstrainedExecution;
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using MySqlConnector;
+using System.Linq.Expressions;
+using Dapper;
+
 namespace CertifiqInmetroWebScrapping.Util
 {
     public class ExcelFileManager
@@ -59,5 +67,48 @@ namespace CertifiqInmetroWebScrapping.Util
 
            Console.WriteLine("Planilha gerada com sucesso");
         }
+        public void InternalizarDadosEmMassa()
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["certificadosScrapping"].ConnectionString;
+
+            var db = new MyMongoDbContext();
+            var CertificadosMD = new CertificadoRepository(db).ObterCertificados();
+
+            using (var conexaoBD = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
+            {
+
+
+                conexaoBD.Execute(@"insert into CertificadoDB(Id
+                                                       ,Certificador
+                                                       ,NumeroCertificado
+                                                       ,Tipo
+                                                       ,Emissao
+                                                       ,Validade
+                                                       ,StatusCertificado
+                                                       ,DocNormativo
+                                                       ,CpfCnpj
+                                                       ,RazaoSocialNome
+                                                       ,NomeFantasia
+                                                       ,Endereco
+                                                       ,Status
+                                                       ,PapelEmpresa) values 
+                                            (@Id
+                                            ,@Certificador
+                                            ,@NumeroCertificado
+                                            ,@Tipo
+                                            ,@Emissao,@Validade,@StatusCertificado
+                                            ,@DocNormativo
+                                            ,@CpfCnpj
+                                            ,@RazaoSocialNome
+                                            ,@NomeFantasia
+                                            ,@Endereco
+                                            ,@Status
+                                            ,@PapelEmpresa)", CertificadosMD);
+            }
+
+            Console.WriteLine("Dados internalizados com sucesso");
+        }
+
+    
     }
 }

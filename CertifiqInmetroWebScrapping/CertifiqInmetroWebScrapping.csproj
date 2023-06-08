@@ -8,11 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="EPPlus" Version="7.0.0-preview1" />
     <PackageReference Include="EpplusExcel" Version="1.0.0" />
     <PackageReference Include="FreeSpire.XLS" Version="12.7.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
+    <PackageReference Include="MySql.Data" Version="8.0.20" />
+    <PackageReference Include="MySqlConnector" Version="2.2.6" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="Selenium.Support" Version="4.9.1" />
     <PackageReference Include="Selenium.WebDriver" Version="4.9.1" />

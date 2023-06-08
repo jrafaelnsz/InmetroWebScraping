@@ -28,6 +28,8 @@ namespace CertifiqInmetroWebScrapping
             Console.WriteLine("5 - Processar PreCertificados obtido via request");
             Console.WriteLine("6 - Consultar por número do certificado ");
             Console.WriteLine("7 - Teste listagem de certificados");
+            Console.WriteLine("8 - Internalizar dados para base relacional Mysql");
+
 
 
             var opcao = Console.ReadLine();
@@ -66,6 +68,10 @@ namespace CertifiqInmetroWebScrapping
                     case "7":
                         ListarCertificado();
                         break;
+
+                    case "8":
+                        internalizarDadosEmMassa();
+                        break;                     
                     default:
                         await MontaMenu();
                         break;
@@ -250,6 +256,13 @@ namespace CertifiqInmetroWebScrapping
             Console.WriteLine("Gerando a planilha");
             var gerarPlanilha = new ExcelFileManager();
             gerarPlanilha.GerarPlilha();
+        }
+
+        static void internalizarDadosEmMassa()
+        {
+            Console.WriteLine("internalizando dados");
+            var gerarPlanilha = new ExcelFileManager();
+            gerarPlanilha.InternalizarDadosEmMassa();
         }
 
         static void ConsultaSiteVelhoPaginas()
